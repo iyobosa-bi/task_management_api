@@ -103,3 +103,11 @@ export const unassignTask = async (id) => {
     throw new Error("Database error occurred");
   }
 }
+
+//Delete
+
+export async function deleteTask(taskId) {
+  const sql = "DELETE FROM tasks WHERE id = ?";
+  const [result] = await db.execute(sql, [taskId]);
+  return result;
+}

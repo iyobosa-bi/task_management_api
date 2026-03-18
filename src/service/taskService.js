@@ -4,8 +4,11 @@ import {
   fetchTaskById,
   updateTaskDetails,
   updateTaskStatus,
-  unassignTask
+  unassignTask,
+  deleteTask,
 } from "../model/taskModel.js";
+
+import { AppError } from "../utils/appError.js";
 
 export const createTask = async (taskInfo) => {
   const { title, priority, assignedTo, assignedBy } = taskInfo; // Destructure the task information
@@ -103,7 +106,6 @@ export const updateTask = async (taskId, updateData, currentUserId) => {
 
 const validStatuses = ["pending", "in-progress", "completed"];
 
-
 export const assigneeTaskStatusUpdate = async (
   taskId,
   newStatus,
@@ -152,7 +154,6 @@ export const assigneeTaskStatusUpdate = async (
 //unassign task service
 
 export const unassignTaskService = async (taskId, currentUserId) => {
- 
   const task = await fetchTaskById(taskId);
   if (!task) {
     throw new Error("Task not found");
@@ -168,4 +169,21 @@ export const unassignTaskService = async (taskId, currentUserId) => {
   }
 
   return true;
-}
+};
+
+//delete task service
+
+export const deleteTaskByAssigner = async (taskId, userId) => {
+  const task = await fetchTaskById(taskId);
+
+  if (!task) {
+    throw new AppError("Task not found", 404);
+  }
+
+  if (task.assignedBy !== userId) {
+    throw new AppError("Only the assigner can delete this task", 403);
+  }
+
+  const deletedTask = await deleteTask(taskId);
+  return true;
+};
