@@ -4,6 +4,7 @@ import {
   fetchTaskById,
   updateTaskDetails,
   updateTaskStatus,
+  unassignTask
 } from "../model/taskModel.js";
 
 export const createTask = async (taskInfo) => {
@@ -102,6 +103,7 @@ export const updateTask = async (taskId, updateData, currentUserId) => {
 
 const validStatuses = ["pending", "in-progress", "completed"];
 
+
 export const assigneeTaskStatusUpdate = async (
   taskId,
   newStatus,
@@ -146,3 +148,24 @@ export const assigneeTaskStatusUpdate = async (
     status: status,
   };
 };
+
+//unassign task service
+
+export const unassignTaskService = async (taskId, currentUserId) => {
+ 
+  const task = await fetchTaskById(taskId);
+  if (!task) {
+    throw new Error("Task not found");
+  }
+
+  if (task.assignedBy !== currentUserId) {
+    throw new Error("Only the assigner can unassign this task");
+  }
+
+  const updated = await unassignTask(taskId);
+  if (!updated) {
+    throw new Error("Failed to unassign task");
+  }
+
+  return true;
+}

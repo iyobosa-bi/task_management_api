@@ -9,7 +9,6 @@ export const insertTask = async (taskPostRequest) => {
 
   try {
     const [dbResponse] = await db.execute(sql, params);
-
     // console.log("Task inserted with ID:", dbResponse.insertId);
     return {
       id: dbResponse.insertId,
@@ -54,7 +53,6 @@ export const fetchTaskById = async (id) => {
 };
 
 //update task
-
 export const updateTaskDetails = async (id, data) => {
   const { title, priority } = data;
 
@@ -90,4 +88,18 @@ export const updateTaskStatus = async (taskId, status) => {
     throw new Error("Database error: " + e.message);
   }
 
+}
+
+//unassign task from user by updating the assignedTo field to null
+
+export const unassignTask = async (id) => {
+  try {
+    const sql = `UPDATE tasks SET assignedTo = NULL, status = 'pending' WHERE id = ?`;
+    const [result] = await db.execute(sql, [id]);
+
+    return result.affectedRows > 0;
+  } catch (e) {
+    console.error("Error unassigning task:", e.message);
+    throw new Error("Database error occurred");
+  }
 }

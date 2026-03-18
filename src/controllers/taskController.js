@@ -3,6 +3,7 @@ import {
   fetchTasks,
   updateTask,
   assigneeTaskStatusUpdate,
+  unassignTaskService,
 } from "../service/taskService.js";
 import {
   sendSuccessResponse,
@@ -50,9 +51,7 @@ export const handleUpdateTask = async (req, res) => {
 export const handleUpdateTaskAssigneeStatus = async (req, res) => {
   try {
     const taskId = parseInt(req.params.id);
-
     const currentUserId = parseInt(req.body.userId);
-
     const updatedTask = await assigneeTaskStatusUpdate(
       taskId,
       req.body,
@@ -67,5 +66,20 @@ export const handleUpdateTaskAssigneeStatus = async (req, res) => {
     );
   } catch (e) {
     sendErrorResponse(res, e.message, "Failed to update task status", 400);
+  }
+};
+
+export const handleUnassignTask = async (req, res) => {
+  const taskId = parseInt(req.params.id);
+  const currentUserId = parseInt(req.body.userId);
+
+  try {
+    const result = await unassignTaskService(taskId, currentUserId);
+
+    if (result) {
+      sendSuccessResponse(res, null, "Task unassigned successfully", 200);
+    }
+  } catch (e) {
+    sendErrorResponse(res, e.message, "Failed to unassign task", 500);
   }
 };

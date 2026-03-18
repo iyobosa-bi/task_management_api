@@ -3,7 +3,8 @@ import {
   handleCreateTask,
   handleFetchTasks,
   handleUpdateTask,
-  handleUpdateTaskAssigneeStatus
+  handleUpdateTaskAssigneeStatus,
+  handleUnassignTask
 } from "../controllers/taskController.js";
 
 const router = express.Router();
@@ -15,5 +16,7 @@ router.get("/", handleFetchTasks);
 router.patch("/:id", handleUpdateTask);
 
 router.patch("/:id/status", handleUpdateTaskAssigneeStatus);
+
+router.patch("/:id/unassign", handleUnassignTask);
 
 export default router;
