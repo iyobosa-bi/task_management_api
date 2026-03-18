@@ -8,7 +8,6 @@ app.use(express.json());
 
 app.use("/tasks", taskRoutes);
 
-
 //routes defintion
 
 app.get("/",(req,res)=>{

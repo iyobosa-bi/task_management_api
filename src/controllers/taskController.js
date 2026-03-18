@@ -1,4 +1,9 @@
-import { createTask, fetchTasks } from "../service/taskService.js";
+import {
+  createTask,
+  fetchTasks,
+  updateTask,
+  assigneeTaskStatusUpdate,
+} from "../service/taskService.js";
 import {
   sendSuccessResponse,
   sendErrorResponse,
@@ -25,5 +30,42 @@ export const handleFetchTasks = async (req, res) => {
     sendSuccessResponse(res, tasks, "Tasks fetched successfully", 200);
   } catch (e) {
     sendErrorResponse(res, e.message, "Failed to fetch tasks", 500);
+  }
+};
+
+export const handleUpdateTask = async (req, res) => {
+  try {
+    const taskId = parseInt(req.params.id);
+
+    const currentUserId = parseInt(req.body.userId); //gets the userid from the request body. This is an assumption the user knows his userid but it ought to be validated
+
+    const updatedTask = await updateTask(taskId, req.body, currentUserId);
+
+    sendSuccessResponse(res, updatedTask, "Task updated successfully", 200);
+  } catch (e) {
+    sendErrorResponse(res, e.message, "Failed to update task", 400);
+  }
+};
+
+export const handleUpdateTaskAssigneeStatus = async (req, res) => {
+  try {
+    const taskId = parseInt(req.params.id);
+
+    const currentUserId = parseInt(req.body.userId);
+
+    const updatedTask = await assigneeTaskStatusUpdate(
+      taskId,
+      req.body,
+      currentUserId,
+    );
+
+    sendSuccessResponse(
+      res,
+      updatedTask,
+      "Task status updated successfully",
+      200,
+    );
+  } catch (e) {
+    sendErrorResponse(res, e.message, "Failed to update task status", 400);
   }
 };
